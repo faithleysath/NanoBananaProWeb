@@ -88,7 +88,7 @@ const ThinkingBlock: React.FC<{ parts: Part[] }> = ({ parts }) => {
 export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, onDelete, onRegenerate }) => {
   const isUser = message.role === 'user';
   const [showActions, setShowActions] = useState(false);
-  const actionsDisabled = isLast && isGenerating && !isUser; // Disable actions only for the model message currently being generated
+  const actionsDisabled = isGenerating;
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this message?")) {
