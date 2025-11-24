@@ -107,7 +107,7 @@ export const SettingsPanel: React.FC = () => {
 
             <button
                 onClick={() => {
-                    if (window.confirm("Clear API Key and reset session?")) {
+                    if (window.confirm("Remove API Key? (Chat history will be preserved)")) {
                         removeApiKey();
                     }
                 }}

@@ -74,7 +74,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   clearHistory: () => set({ history: [], messages: [] }),
 
-  removeApiKey: () => set({ apiKey: null, history: [], messages: [] }),
+  removeApiKey: () => set({ apiKey: null }),
 
   deleteMessage: (id) =>
     set((state) => {
