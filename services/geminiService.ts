@@ -29,7 +29,8 @@ export const streamGeminiResponse = async function* (
   history: Content[],
   prompt: string,
   images: { base64Data: string; mimeType: string }[],
-  settings: AppSettings
+  settings: AppSettings,
+  signal?: AbortSignal
 ) {
   const ai = new GoogleGenAI(
     settings.customEndpoint 
@@ -60,6 +61,9 @@ export const streamGeminiResponse = async function* (
     let currentParts: Part[] = [];
 
     for await (const chunk of responseStream) {
+      if (signal?.aborted) {
+        break;
+      }
       const candidates = chunk.candidates;
       if (!candidates || candidates.length === 0) continue;
       

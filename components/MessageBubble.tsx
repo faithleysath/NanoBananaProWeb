@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage, Part } from '../types';
-import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit } from 'lucide-react';
+import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit, Trash2, RotateCcw } from 'lucide-react';
 
 interface Props {
   message: ChatMessage;
+  onDelete: (id: string) => void;
+  onRegenerate: (id: string) => void;
 }
 
 const openImageInNewTab = (mimeType: string, base64Data: string) => {
@@ -81,8 +83,9 @@ const ThinkingBlock: React.FC<{ parts: Part[] }> = ({ parts }) => {
   );
 };
 
-export const MessageBubble: React.FC<Props> = ({ message }) => {
+export const MessageBubble: React.FC<Props> = ({ message, onDelete, onRegenerate }) => {
   const isUser = message.role === 'user';
+  const [showActions, setShowActions] = useState(false);
 
   // Group parts: consecutive thinking parts should be grouped together
   const groupedParts: (Part | Part[])[] = [];
@@ -186,7 +189,11 @@ export const MessageBubble: React.FC<Props> = ({ message }) => {
   };
 
   return (
-    <div className={`flex w-full gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div 
+      className={`flex w-full gap-4 ${isUser ? 'justify-end' : 'justify-start'} group`}
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
+    >
       
       {!isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg shadow-blue-500/20 mt-1">
@@ -211,9 +218,29 @@ export const MessageBubble: React.FC<Props> = ({ message }) => {
           )}
         </div>
         
-        <span className="text-[10px] text-gray-500 font-medium px-1">
-          {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </span>
+        <div className="flex items-center gap-2 px-1">
+           <span className="text-[10px] text-gray-500 font-medium">
+             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+           </span>
+           
+           {/* Actions */}
+           <div className={`flex items-center gap-1 transition-opacity duration-200 ${showActions ? 'opacity-100' : 'opacity-0'}`}>
+              <button 
+                onClick={() => onRegenerate(message.id)}
+                className="p-1 rounded hover:bg-gray-800 text-gray-400 hover:text-blue-400"
+                title="Regenerate from here"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </button>
+              <button 
+                onClick={() => onDelete(message.id)}
+                className="p-1 rounded hover:bg-gray-800 text-gray-400 hover:text-red-400"
+                title="Delete message"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+           </div>
+        </div>
       </div>
 
       {isUser && (

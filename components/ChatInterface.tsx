@@ -15,10 +15,13 @@ export const ChatInterface: React.FC = () => {
     addMessage, 
     updateLastMessage,
     isLoading, 
-    setLoading 
+    setLoading,
+    deleteMessage,
+    sliceMessages
   } = useAppStore();
   
   const scrollRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -89,19 +92,26 @@ export const ChatInterface: React.FC = () => {
           mimeType: a.mimeType
       }));
 
+      abortControllerRef.current = new AbortController();
+
       const stream = streamGeminiResponse(
         apiKey,
         history, // Pass existing history (before user message is added in this scope's variable, which is correct)
         text,
         imagesPayload,
-        settings
+        settings,
+        abortControllerRef.current.signal
       );
 
       for await (const chunk of stream) {
           updateLastMessage(chunk.modelParts);
       }
 
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'AbortError' || abortControllerRef.current?.signal.aborted) {
+        console.log("Generation stopped by user");
+        return;
+      }
       console.error("Failed to generate", error);
       // Add error message to UI
       const errorMessage: ChatMessage = {
@@ -127,7 +137,60 @@ export const ChatInterface: React.FC = () => {
        alert("Generation failed. Check API Key and limits.");
     } finally {
       setLoading(false);
+      abortControllerRef.current = null;
     }
+  };
+
+  const handleStop = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    deleteMessage(id);
+  };
+
+  const handleRegenerate = async (id: string) => {
+    if (isLoading) return;
+
+    const index = messages.findIndex(m => m.id === id);
+    if (index === -1) return;
+    
+    const message = messages[index];
+    let targetUserMessage: ChatMessage | undefined;
+    let sliceIndex = -1;
+
+    if (message.role === 'user') {
+        targetUserMessage = message;
+        sliceIndex = index - 1;
+    } else if (message.role === 'model') {
+        // Find preceding user message
+        if (index > 0 && messages[index-1].role === 'user') {
+            targetUserMessage = messages[index-1];
+            sliceIndex = index - 2;
+        }
+    }
+    
+    if (!targetUserMessage) return;
+
+    // Extract content
+    const textPart = targetUserMessage.parts.find(p => p.text);
+    const text = textPart ? textPart.text : '';
+    const imageParts = targetUserMessage.parts.filter(p => p.inlineData);
+    
+    const attachments: Attachment[] = imageParts.map(p => ({
+        file: new File([], "placeholder"), // Dummy file object
+        preview: `data:${p.inlineData!.mimeType};base64,${p.inlineData!.data}`,
+        base64Data: p.inlineData!.data || '',
+        mimeType: p.inlineData!.mimeType || ''
+    }));
+
+    // Slice history (delete target and future)
+    sliceMessages(sliceIndex);
+
+    // Resend
+    handleSend(text || '', attachments);
   };
 
   return (
@@ -149,7 +212,12 @@ export const ChatInterface: React.FC = () => {
         )}
 
         {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+          <MessageBubble 
+            key={msg.id} 
+            message={msg} 
+            onDelete={handleDelete}
+            onRegenerate={handleRegenerate}
+          />
         ))}
 
         {isLoading && (
@@ -162,7 +230,7 @@ export const ChatInterface: React.FC = () => {
         )}
       </div>
 
-      <InputArea onSend={handleSend} disabled={isLoading} />
+      <InputArea onSend={handleSend} onStop={handleStop} disabled={isLoading} />
     </div>
   );
 };

@@ -17,6 +17,8 @@ interface AppState {
   toggleSettings: () => void;
   clearHistory: () => void;
   removeApiKey: () => void;
+  deleteMessage: (id: string) => void;
+  sliceMessages: (index: number) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -73,4 +75,24 @@ export const useAppStore = create<AppState>((set) => ({
   clearHistory: () => set({ history: [], messages: [] }),
 
   removeApiKey: () => set({ apiKey: null, history: [], messages: [] }),
+
+  deleteMessage: (id) =>
+    set((state) => {
+      const index = state.messages.findIndex((m) => m.id === id);
+      if (index === -1) return {};
+
+      const newMessages = [...state.messages];
+      const newHistory = [...state.history];
+
+      newMessages.splice(index, 1);
+      newHistory.splice(index, 1);
+
+      return { messages: newMessages, history: newHistory };
+    }),
+
+  sliceMessages: (index) =>
+    set((state) => ({
+      messages: state.messages.slice(0, index + 1),
+      history: state.history.slice(0, index + 1),
+    })),
 }));

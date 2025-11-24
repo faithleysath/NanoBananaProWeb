@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Send, ImagePlus, X, Loader2 } from 'lucide-react';
+import { Send, ImagePlus, X, Square } from 'lucide-react';
 import { Attachment } from '../types';
 
 interface Props {
   onSend: (text: string, attachments: Attachment[]) => void;
+  onStop: () => void;
   disabled: boolean;
 }
 
-export const InputArea: React.FC<Props> = ({ onSend, disabled }) => {
+export const InputArea: React.FC<Props> = ({ onSend, onStop, disabled }) => {
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -131,13 +132,23 @@ export const InputArea: React.FC<Props> = ({ onSend, disabled }) => {
             rows={1}
           />
 
-          <button
-            onClick={handleSubmit}
-            disabled={disabled || (!text.trim() && attachments.length === 0)}
-            className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 disabled:opacity-50 disabled:bg-gray-700 disabled:shadow-none transition"
-          >
-            {disabled ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-          </button>
+          {disabled ? (
+            <button
+              onClick={onStop}
+              className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500 text-white shadow-lg shadow-red-500/20 hover:bg-red-600 transition"
+              title="Stop Generation"
+            >
+              <Square className="h-4 w-4 fill-current" />
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={!text.trim() && attachments.length === 0}
+              className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 disabled:opacity-50 disabled:bg-gray-700 disabled:shadow-none transition"
+            >
+              <Send className="h-5 w-5" />
+            </button>
+          )}
         </div>
         <div className="mt-2 text-center text-xs text-gray-500">
            Enter to send, Shift + Enter for new line. Supports up to 14 reference images.
