@@ -37,8 +37,20 @@ export const streamGeminiResponse = async function* (
       ? { apiKey, httpOptions: { baseUrl: settings.customEndpoint } }
       : { apiKey }
   );
+
+  // Filter out thought parts from history to avoid sending thought chains back to the model
+  const cleanHistory = history.map(item => {
+    if (item.role === 'model') {
+      return {
+        ...item,
+        parts: item.parts.filter(p => !p.thought)
+      };
+    }
+    return item;
+  }).filter(item => item.parts.length > 0);
+
   const currentUserContent = constructUserContent(prompt, images);
-  const contentsPayload = [...history, currentUserContent];
+  const contentsPayload = [...cleanHistory, currentUserContent];
 
   try {
     const responseStream = await ai.models.generateContentStream({
