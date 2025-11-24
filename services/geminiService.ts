@@ -51,7 +51,6 @@ export const streamGeminiResponse = async function* (
         },
         tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
         responseModalities: ["TEXT", "IMAGE"],
-        // @ts-ignore - The SDK types might not have thinkingConfig yet
         thinkingConfig: {
             includeThoughts: true,
         },
@@ -70,9 +69,11 @@ export const streamGeminiResponse = async function* (
       const newParts = candidates[0].content?.parts || [];
 
       for (const part of newParts) {
+        const signature = (part as any).thoughtSignature;
+        const isThought = !!(part as any).thought;
+
         // Handle Text (Thought or Regular)
-        if (part.text) {
-          const isThought = !!(part as any).thought;
+        if (part.text !== undefined) {
           const lastPart = currentParts[currentParts.length - 1];
 
           // Check if we should append to the last part or start a new one.
@@ -83,23 +84,34 @@ export const streamGeminiResponse = async function* (
             !!lastPart.thought === isThought
           ) {
             lastPart.text += part.text;
+            if (signature) {
+                lastPart.thoughtSignature = signature;
+            }
           } else {
             // New text block
-            currentParts.push({ 
+            const newPart: Part = { 
               text: part.text, 
               thought: isThought 
-            });
+            };
+            if (signature) {
+                newPart.thoughtSignature = signature;
+            }
+            currentParts.push(newPart);
           }
         } 
         // Handle Images
         else if (part.inlineData) {
-          currentParts.push({ 
+          const newPart: Part = { 
             inlineData: {
                 mimeType: part.inlineData.mimeType || 'image/png',
                 data: part.inlineData.data || ''
             }, 
-            thought: !!(part as any).thought 
-          });
+            thought: isThought 
+          };
+          if (signature) {
+              newPart.thoughtSignature = signature;
+          }
+          currentParts.push(newPart);
         }
       }
 

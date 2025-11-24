@@ -13,6 +13,7 @@ export interface Part {
     data: string;
   };
   thought?: boolean;
+  thoughtSignature?: string;
 }
 
 export interface Content {
