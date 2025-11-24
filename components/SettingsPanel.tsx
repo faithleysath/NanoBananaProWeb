@@ -39,19 +39,35 @@ export const SettingsPanel: React.FC = () => {
         <section>
           <label className="block text-sm font-medium text-gray-400 mb-3">Aspect Ratio</label>
           <div className="grid grid-cols-3 gap-2">
-            {(['1:1', '3:4', '4:3', '9:16', '16:9'] as const).map((ratio) => (
-              <button
-                key={ratio}
-                onClick={() => updateSettings({ aspectRatio: ratio })}
-                className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                  settings.aspectRatio === ratio
-                    ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                    : 'border-gray-800 bg-gray-950 text-gray-400 hover:border-gray-700'
-                }`}
-              >
-                {ratio}
-              </button>
-            ))}
+            {(['1:1', '3:4', '4:3', '9:16', '16:9'] as const).map((ratio) => {
+              const isActive = settings.aspectRatio === ratio;
+              const ratioPreviewStyles: Record<string, string> = {
+                '1:1': 'w-6 h-6',
+                '3:4': 'w-5 h-7',
+                '4:3': 'w-7 h-5',
+                '9:16': 'w-4 h-7',
+                '16:9': 'w-7 h-4',
+              };
+
+              return (
+                <button
+                  key={ratio}
+                  onClick={() => updateSettings({ aspectRatio: ratio })}
+                  className={`flex flex-col items-center justify-center gap-2 rounded-lg border p-3 transition ${
+                    isActive
+                      ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                      : 'border-gray-800 bg-gray-950 text-gray-400 hover:border-gray-700 hover:bg-gray-900'
+                  }`}
+                >
+                  <div
+                    className={`rounded-sm border-2 ${
+                      isActive ? 'border-blue-400 bg-blue-400/20' : 'border-gray-600 bg-gray-800'
+                    } ${ratioPreviewStyles[ratio]}`}
+                  />
+                  <span className="text-xs font-medium">{ratio}</span>
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -91,14 +107,14 @@ export const SettingsPanel: React.FC = () => {
 
             <button
                 onClick={() => {
-                    if (window.confirm("Remove API Key and clear data?")) {
+                    if (window.confirm("Clear API Key and reset session?")) {
                         removeApiKey();
                     }
                 }}
                 className="w-full flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-800 p-3 text-gray-300 hover:bg-gray-700 transition"
             >
                 <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
+                <span>Clear API Key</span>
             </button>
         </section>
       </div>

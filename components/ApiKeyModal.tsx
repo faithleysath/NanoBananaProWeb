@@ -27,7 +27,7 @@ export const ApiKeyModal: React.FC = () => {
         
         <h2 className="mb-2 text-center text-2xl font-bold text-white">Enter API Key</h2>
         <p className="mb-8 text-center text-gray-400">
-          This app runs 100% on your browser. Your key is stored locally in your device.
+          This app runs 100% on your browser. Your key is kept in memory and will be cleared on refresh.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { AppSettings, ChatMessage, Content, Part } from '../types';
 
 interface AppState {
@@ -20,67 +19,56 @@ interface AppState {
   removeApiKey: () => void;
 }
 
-export const useAppStore = create<AppState>()(
-  persist(
-    (set) => ({
-      apiKey: null,
-      settings: {
-        resolution: '1K',
-        aspectRatio: '1:1',
-        useGrounding: false,
-      },
-      history: [],
-      messages: [],
-      isLoading: false,
-      isSettingsOpen: false,
+export const useAppStore = create<AppState>((set) => ({
+  apiKey: null,
+  settings: {
+    resolution: '1K',
+    aspectRatio: '1:1',
+    useGrounding: false,
+  },
+  history: [],
+  messages: [],
+  isLoading: false,
+  isSettingsOpen: false,
 
-      setApiKey: (key) => set({ apiKey: key }),
-      
-      updateSettings: (newSettings) => 
-        set((state) => ({ settings: { ...state.settings, ...newSettings } })),
+  setApiKey: (key) => set({ apiKey: key }),
+  
+  updateSettings: (newSettings) => 
+    set((state) => ({ settings: { ...state.settings, ...newSettings } })),
 
-      addMessage: (message, content) => 
-        set((state) => ({ 
-          messages: [...state.messages, message],
-          history: [...state.history, content]
-        })),
+  addMessage: (message, content) => 
+    set((state) => ({ 
+      messages: [...state.messages, message],
+      history: [...state.history, content]
+    })),
 
-      updateLastMessage: (parts) => 
-        set((state) => {
-            const messages = [...state.messages];
-            const history = [...state.history];
-            
-            if (messages.length > 0) {
-                messages[messages.length - 1] = {
-                    ...messages[messages.length - 1],
-                    parts: [...parts] // Create a copy to trigger re-renders
-                };
-            }
-            
-            if (history.length > 0) {
-                history[history.length - 1] = {
-                    ...history[history.length - 1],
-                    parts: [...parts]
-                };
-            }
-            
-            return { messages, history };
-        }),
-
-      setLoading: (loading) => set({ isLoading: loading }),
-      
-      toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
-
-      clearHistory: () => set({ history: [], messages: [] }),
-
-      removeApiKey: () => set({ apiKey: null, history: [], messages: [] }),
+  updateLastMessage: (parts) => 
+    set((state) => {
+        const messages = [...state.messages];
+        const history = [...state.history];
+        
+        if (messages.length > 0) {
+            messages[messages.length - 1] = {
+                ...messages[messages.length - 1],
+                parts: [...parts] // Create a copy to trigger re-renders
+            };
+        }
+        
+        if (history.length > 0) {
+            history[history.length - 1] = {
+                ...history[history.length - 1],
+                parts: [...parts]
+            };
+        }
+        
+        return { messages, history };
     }),
-    {
-      name: 'gemini-app-storage',
-      partialize: (state) => ({ 
-        apiKey: state.apiKey, 
-        settings: state.settings 
-      }), // Only persist key and settings, not history/messages for privacy/size
-    }
-  )
-);
+
+  setLoading: (loading) => set({ isLoading: loading }),
+  
+  toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
+
+  clearHistory: () => set({ history: [], messages: [] }),
+
+  removeApiKey: () => set({ apiKey: null, history: [], messages: [] }),
+}));
