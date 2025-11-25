@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Sparkles, Gamepad2, BrainCircuit, X, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { SnakeGame } from './games/SnakeGame';
-import { TapGame } from './games/TapGame';
 import { DinoGame } from './games/DinoGame';
-import { BubbleGame } from './games/BubbleGame';
+import { LifeGame } from './games/LifeGame';
+import { Puzzle2048 } from './games/Puzzle2048';
 
 interface Props {
     onClose?: () => void;
@@ -73,9 +73,9 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true,
 
   const renderGame = () => {
       if (isDark) {
-          return isMobile ? <TapGame /> : <SnakeGame />;
+          return isMobile ? <LifeGame /> : <SnakeGame />;
       } else {
-          return isMobile ? <BubbleGame /> : <DinoGame />;
+          return isMobile ? <Puzzle2048 /> : <DinoGame />;
       }
   };
 
