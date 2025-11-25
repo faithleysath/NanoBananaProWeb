@@ -172,7 +172,7 @@ export const Puzzle2048: React.FC = () => {
       </div>
 
       <div 
-        className="relative bg-gray-300/30 p-2 rounded-xl"
+        className="relative bg-gray-300/30 p-2 rounded-xl touch-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
