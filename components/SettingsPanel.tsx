@@ -136,7 +136,7 @@ export const SettingsPanel: React.FC = () => {
         
         {/* Share Configuration */}
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
-           <div className="flex gap-2 mb-6">
+           <div className="flex gap-2 mb-2">
              <button
                onClick={handleCreateBookmark}
                className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition"
