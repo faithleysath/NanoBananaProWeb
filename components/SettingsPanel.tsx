@@ -161,29 +161,23 @@ export const SettingsPanel: React.FC = () => {
         
         {/* Share Configuration */}
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
-           <div className="flex flex-col gap-3 mb-6">
+           <div className="flex gap-2 mb-6">
              <button
                onClick={handleCreateBookmark}
-               className="w-full flex items-center justify-center gap-2 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition"
+               className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition"
              >
                <Share2 className="h-4 w-4" />
-               <span>Update URL & Copy</span>
+               <span className="text-xs sm:text-sm">Update URL</span>
              </button>
-             
-             <div className="flex items-center gap-3">
-               <div className="h-px flex-1 bg-gray-200 dark:bg-gray-800"></div>
-               <span className="text-xs text-gray-400 font-medium">OR</span>
-               <div className="h-px flex-1 bg-gray-200 dark:bg-gray-800"></div>
-             </div>
 
              <a
                href={getBookmarkUrl()}
                onClick={(e) => e.preventDefault()} // Prevent navigation, strictly for dragging
-               className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-3 text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-grab active:cursor-grabbing transition text-sm font-medium"
+               className="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-3 text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-grab active:cursor-grabbing transition text-sm font-medium"
                title="Drag this button to your bookmarks bar"
              >
                <Bookmark className="h-4 w-4" />
-               <span>Drag Me to Bookmarks</span>
+               <span className="text-xs sm:text-sm">Drag to Bookmark</span>
              </a>
            </div>
         </section>
