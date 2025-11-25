@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { Key, ExternalLink, ChevronDown, ChevronRight, Settings2 } from 'lucide-react';
 
@@ -8,6 +8,12 @@ export const ApiKeyModal: React.FC = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [endpoint, setEndpoint] = useState(settings.customEndpoint || '');
   const [model, setModel] = useState(settings.modelName || 'gemini-3-pro-image-preview');
+
+  // Sync local state with store settings (e.g. when updated via URL params)
+  useEffect(() => {
+    if (settings.customEndpoint) setEndpoint(settings.customEndpoint);
+    if (settings.modelName) setModel(settings.modelName);
+  }, [settings.customEndpoint, settings.modelName]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

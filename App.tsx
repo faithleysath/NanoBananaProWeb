@@ -6,11 +6,27 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { Settings, MessageSquare, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
-  const { apiKey, settings, isSettingsOpen, toggleSettings } = useAppStore();
+  const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
+    const params = new URLSearchParams(window.location.search);
+    const urlApiKey = params.get('apikey');
+    const urlEndpoint = params.get('endpoint');
+    const urlModel = params.get('model');
+
+    if (urlEndpoint || urlModel) {
+      updateSettings({
+        ...(urlEndpoint ? { customEndpoint: urlEndpoint } : {}),
+        ...(urlModel ? { modelName: urlModel } : {}),
+      });
+    }
+
+    if (urlApiKey) {
+      setApiKey(urlApiKey);
+    }
   }, []);
 
   // Theme handling
