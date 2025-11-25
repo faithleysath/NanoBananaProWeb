@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { AppSettings, ChatMessage, Content, Part } from '../types';
 
 interface AppState {
@@ -20,69 +21,80 @@ interface AppState {
   sliceMessages: (index: number) => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  apiKey: null,
-  settings: {
-    resolution: '1K',
-    aspectRatio: 'Auto',
-    useGrounding: false,
-    enableThinking: true,
-    streamResponse: true,
-    customEndpoint: '',
-    modelName: 'gemini-3-pro-image-preview',
-    theme: 'system',
-  },
-  messages: [],
-  isLoading: false,
-  isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      apiKey: null,
+      settings: {
+        resolution: '1K',
+        aspectRatio: 'Auto',
+        useGrounding: false,
+        enableThinking: true,
+        streamResponse: true,
+        customEndpoint: '',
+        modelName: 'gemini-3-pro-image-preview',
+        theme: 'system',
+      },
+      messages: [],
+      isLoading: false,
+      isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
 
-  setApiKey: (key) => set({ apiKey: key }),
-  
-  updateSettings: (newSettings) => 
-    set((state) => ({ settings: { ...state.settings, ...newSettings } })),
+      setApiKey: (key) => set({ apiKey: key }),
+      
+      updateSettings: (newSettings) => 
+        set((state) => ({ settings: { ...state.settings, ...newSettings } })),
 
-  addMessage: (message) => 
-    set((state) => ({ 
-      messages: [...state.messages, message],
-    })),
+      addMessage: (message) => 
+        set((state) => ({ 
+          messages: [...state.messages, message],
+        })),
 
-  updateLastMessage: (parts, isError = false, thinkingDuration) => 
-    set((state) => {
-        const messages = [...state.messages];
-        
-        if (messages.length > 0) {
-            messages[messages.length - 1] = {
-                ...messages[messages.length - 1],
-                parts: [...parts], // Create a copy to trigger re-renders
-                isError: isError,
-                ...(thinkingDuration !== undefined && { thinkingDuration })
-            };
-        }
-        
-        return { messages };
+      updateLastMessage: (parts, isError = false, thinkingDuration) => 
+        set((state) => {
+            const messages = [...state.messages];
+            
+            if (messages.length > 0) {
+                messages[messages.length - 1] = {
+                    ...messages[messages.length - 1],
+                    parts: [...parts], // Create a copy to trigger re-renders
+                    isError: isError,
+                    ...(thinkingDuration !== undefined && { thinkingDuration })
+                };
+            }
+            
+            return { messages };
+        }),
+
+      setLoading: (loading) => set({ isLoading: loading }),
+      
+      toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
+
+      clearHistory: () => set({ messages: [] }),
+
+      removeApiKey: () => set({ apiKey: null }),
+
+      deleteMessage: (id) =>
+        set((state) => {
+          const index = state.messages.findIndex((m) => m.id === id);
+          if (index === -1) return {};
+
+          const newMessages = [...state.messages];
+          newMessages.splice(index, 1);
+
+          return { messages: newMessages };
+        }),
+
+      sliceMessages: (index) =>
+        set((state) => ({
+          messages: state.messages.slice(0, index + 1),
+        })),
     }),
-
-  setLoading: (loading) => set({ isLoading: loading }),
-  
-  toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
-
-  clearHistory: () => set({ messages: [] }),
-
-  removeApiKey: () => set({ apiKey: null }),
-
-  deleteMessage: (id) =>
-    set((state) => {
-      const index = state.messages.findIndex((m) => m.id === id);
-      if (index === -1) return {};
-
-      const newMessages = [...state.messages];
-      newMessages.splice(index, 1);
-
-      return { messages: newMessages };
-    }),
-
-  sliceMessages: (index) =>
-    set((state) => ({
-      messages: state.messages.slice(0, index + 1),
-    })),
-}));
+    {
+      name: 'gemini-pro-storage',
+      partialize: (state) => ({
+        apiKey: state.apiKey,
+        settings: state.settings,
+      }),
+    }
+  )
+);
