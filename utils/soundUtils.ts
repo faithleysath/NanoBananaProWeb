@@ -6,6 +6,9 @@ const getContext = () => {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
   return audioCtx;
 };
 
@@ -37,12 +40,49 @@ export const playEatSound = () => {
 };
 
 export const playJumpSound = () => {
-  playTone(400, 'square', 0.1, 0.05);
+  try {
+    const ctx = getContext();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(150, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.1);
+  } catch (e) {
+    console.error("Jump sound failed", e);
+  }
 };
 
 export const playGameOverSound = () => {
-  playTone(200, 'sawtooth', 0.3, 0.2);
-  setTimeout(() => playTone(150, 'sawtooth', 0.4, 0.2), 200);
+  try {
+    const ctx = getContext();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(200, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.4);
+
+    gainNode.gain.setValueAtTime(0.2, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.4);
+  } catch (e) {
+    console.error("Game over sound failed", e);
+  }
 };
 
 export const playPopSound = () => {
@@ -51,4 +91,27 @@ export const playPopSound = () => {
 
 export const playMergeSound = () => {
   playTone(300, 'sine', 0.15, 0.1);
+};
+
+export const playScoreSound = () => {
+  try {
+    const ctx = getContext();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+    oscillator.frequency.setValueAtTime(1200, ctx.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.3);
+  } catch (e) {
+    console.error("Score sound failed", e);
+  }
 };
