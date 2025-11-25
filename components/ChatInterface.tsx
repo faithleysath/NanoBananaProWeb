@@ -107,28 +107,15 @@ export const ChatInterface: React.FC = () => {
         return;
       }
       console.error("Failed to generate", error);
-      // Add error message to UI
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'model',
-        parts: [{ text: "Error generating response." }],
-        timestamp: Date.now(),
-        isError: true
-      };
-      // We don't add error to raw history to avoid corrupting the context
-       // But we need to see it in UI.
-       // Hack: Add a dummy content that we might filter later, or just update UI state manually.
-       // For simplicity, we add it to UI but not history in a robust app.
-       // Here, the store `addMessage` adds to both. 
-       // Ideally we separate `addUiMessage` and `addHistoryItem`. 
-       // For this scope, let's just accept the error state on the last message if needed, 
-       // but cleaner to not corrupt history.
-       
-       // Refined approach: Just alert for now or add a visual error. 
-       // I'll manually add to messages state only via a hypothetical store method if I had one,
-       // but `addMessage` couples them. 
-       // Let's rely on the user seeing the error in console/alert or trying again.
-       alert("Generation failed. Check API Key and limits.");
+      
+      let errorText = "Generation failed. Please check your network and API key.";
+      if (error.message) {
+          errorText = `Error: ${error.message}`;
+      }
+
+      // Update the placeholder message with error text and flag
+      updateLastMessage([{ text: errorText }], true);
+
     } finally {
       setLoading(false);
       abortControllerRef.current = null;
