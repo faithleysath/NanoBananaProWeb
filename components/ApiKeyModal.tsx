@@ -21,16 +21,16 @@ export const ApiKeyModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-      <div className="w-full max-w-md rounded-2xl bg-gray-900 border border-gray-800 shadow-2xl p-6 sm:p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/80 backdrop-blur-sm px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl p-6 sm:p-8 transition-colors duration-200">
         <div className="mb-6 flex justify-center">
-          <div className="rounded-full bg-blue-500/10 p-4 ring-1 ring-blue-500/50">
-            <Key className="h-8 w-8 text-blue-500" />
+          <div className="rounded-full bg-blue-50 dark:bg-blue-500/10 p-4 ring-1 ring-blue-200 dark:ring-blue-500/50">
+            <Key className="h-8 w-8 text-blue-600 dark:text-blue-500" />
           </div>
         </div>
         
-        <h2 className="mb-2 text-center text-2xl font-bold text-white">Enter API Key</h2>
-        <p className="mb-8 text-center text-gray-400">
+        <h2 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-white">Enter API Key</h2>
+        <p className="mb-8 text-center text-gray-500 dark:text-gray-400">
           This app runs 100% on your browser. Your key is kept in memory and will be cleared on refresh.
         </p>
 
@@ -42,7 +42,7 @@ export const ApiKeyModal: React.FC = () => {
               id="apiKey"
               value={inputKey}
               onChange={(e) => setInputKey(e.target.value)}
-              className="w-full rounded-lg bg-gray-950 border border-gray-800 px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition"
+              className="w-full rounded-lg bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition"
               placeholder="AIzaSy..."
               autoFocus
             />
@@ -53,9 +53,9 @@ export const ApiKeyModal: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="group flex items-center gap-2 text-sm text-gray-500 transition-all"
+              className="group flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500 transition-all"
             >
-              <div className="flex items-center gap-2 group-hover:text-blue-400 group-hover:underline">
+              <div className="flex items-center gap-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:underline">
                 <Settings2 className="h-3 w-3" />
                 <span>Advanced Configuration</span>
                 {showAdvanced ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
@@ -68,14 +68,14 @@ export const ApiKeyModal: React.FC = () => {
               }`}
             >
               <div className="overflow-hidden">
-                <div className="mt-2 rounded-lg bg-gray-950 border border-gray-800 p-4 space-y-4">
+                <div className="mt-2 rounded-lg bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 p-4 space-y-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">Custom Endpoint (Optional)</label>
                     <input
                       type="text"
                       value={endpoint}
                       onChange={(e) => setEndpoint(e.target.value)}
-                      className="w-full rounded-md bg-gray-900 border border-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
                       placeholder="https://generativelanguage.googleapis.com"
                     />
                   </div>
@@ -85,7 +85,7 @@ export const ApiKeyModal: React.FC = () => {
                       type="text"
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
-                      className="w-full rounded-md bg-gray-900 border border-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                      className="w-full rounded-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
                       placeholder="gemini-3-pro-image-preview"
                     />
                   </div>
@@ -108,7 +108,7 @@ export const ApiKeyModal: React.FC = () => {
             href="https://aistudio.google.com/app/apikey" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center text-sm text-gray-500 hover:text-blue-400 transition"
+            className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
           >
             <span>Get a Gemini API Key</span>
             <ExternalLink className="ml-1 h-3 w-3" />

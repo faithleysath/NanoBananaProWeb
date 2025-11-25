@@ -6,33 +6,51 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { Settings, MessageSquare, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
-  const { apiKey, isSettingsOpen, toggleSettings } = useAppStore();
+  const { apiKey, settings, isSettingsOpen, toggleSettings } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Theme handling
+  useEffect(() => {
+    const root = window.document.documentElement;
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const applyTheme = () => {
+      if (settings.theme === 'dark' || (settings.theme === 'system' && systemTheme.matches)) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    };
+
+    applyTheme();
+    systemTheme.addEventListener('change', applyTheme);
+    return () => systemTheme.removeEventListener('change', applyTheme);
+  }, [settings.theme]);
+
   if (!mounted) return null;
 
   return (
-    <div className="flex h-screen w-full flex-col bg-gray-950 text-gray-100 overflow-hidden relative">
+    <div className="flex h-dvh w-full flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 overflow-hidden relative transition-colors duration-200">
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-gray-800 bg-gray-900/50 px-6 py-4 backdrop-blur-md z-10">
+      <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 px-6 py-4 backdrop-blur-md z-10 transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
             <MessageSquare className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-white">Gemini 3 Pro</h1>
-            <p className="text-xs text-gray-400">Client-Side AI • Image Preview</p>
+            <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Gemini 3 Pro</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Client-Side AI • Image Preview</p>
           </div>
         </div>
         
         {apiKey && (
           <button
             onClick={toggleSettings}
-            className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             title="Settings"
           >
             <Settings className="h-6 w-6" />
@@ -49,8 +67,8 @@ const App: React.FC = () => {
 
         {/* Settings Sidebar (Desktop/Mobile Overlay) */}
         {isSettingsOpen && (
-          <div className="absolute inset-0 z-20 flex justify-end bg-black/50 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none sm:w-80 sm:border-l sm:border-gray-800">
-             <div className="w-full h-full sm:w-80 bg-gray-900 border-l border-gray-800 shadow-2xl p-4 overflow-y-auto">
+          <div className="absolute inset-0 z-20 flex justify-end bg-black/50 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none sm:w-80 sm:border-l sm:border-gray-200 dark:sm:border-gray-800 transition-colors duration-200">
+             <div className="w-full h-full sm:w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-2xl p-4 overflow-y-auto transition-colors duration-200">
                 <SettingsPanel />
              </div>
           </div>

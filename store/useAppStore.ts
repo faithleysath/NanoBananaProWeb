@@ -28,6 +28,7 @@ export const useAppStore = create<AppState>((set) => ({
     useGrounding: false,
     customEndpoint: '',
     modelName: 'gemini-3-pro-image-preview',
+    theme: 'system',
   },
   messages: [],
   isLoading: false,

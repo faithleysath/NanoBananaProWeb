@@ -4,6 +4,7 @@ export interface AppSettings {
   useGrounding: boolean;
   customEndpoint?: string;
   modelName?: string;
+  theme: 'light' | 'dark' | 'system';
 }
 
 export interface Part {

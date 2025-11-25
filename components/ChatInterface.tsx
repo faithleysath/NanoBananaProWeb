@@ -171,17 +171,17 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-950">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-950 transition-colors duration-200">
       <div 
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 space-y-8 scroll-smooth"
       >
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center opacity-40 select-none">
-            <div className="mb-6 rounded-3xl bg-gray-900 p-8 shadow-2xl ring-1 ring-gray-800">
+            <div className="mb-6 rounded-3xl bg-gray-50 dark:bg-gray-900 p-8 shadow-2xl ring-1 ring-gray-200 dark:ring-gray-800 transition-colors duration-200">
                <Sparkles className="h-16 w-16 text-blue-500 mb-4 mx-auto animate-pulse-fast" />
-               <h3 className="text-2xl font-bold text-white mb-2">Gemini 3 Pro</h3>
-               <p className="max-w-xs text-sm text-gray-400">
+               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Gemini 3 Pro</h3>
+               <p className="max-w-xs text-sm text-gray-500 dark:text-gray-400">
                  Start typing to create images, edit them conversationally, or ask complex questions.
                </p>
             </div>
