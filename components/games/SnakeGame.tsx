@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { playEatSound, playGameOverSound } from '../../utils/soundUtils';
 
 const GRID_SIZE = 20;
 const TILE_SIZE = 20;
@@ -126,6 +127,7 @@ export const SnakeGame: React.FC = () => {
     // Check Self Collision
     if (snakeRef.current.some(segment => segment.x === head.x && segment.y === head.y)) {
       setGameOver(true);
+      playGameOverSound();
       return;
     }
 
@@ -140,6 +142,7 @@ export const SnakeGame: React.FC = () => {
         return newScore;
       });
       foodRef.current = generateFood();
+      playEatSound();
     } else {
       snakeRef.current.pop();
     }

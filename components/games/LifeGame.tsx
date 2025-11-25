@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { RefreshCw, Play, Pause, Eraser } from 'lucide-react';
+import { playPopSound } from '../../utils/soundUtils';
 
 const CELL_SIZE = 10;
 const SPEED = 100;
@@ -14,6 +15,7 @@ export const LifeGame: React.FC = () => {
   const rowsRef = useRef(0);
   const frameRef = useRef<number>(0);
   const lastUpdateRef = useRef(0);
+  const lastSoundRef = useRef(0);
 
   const initGrid = useCallback((width: number, height: number) => {
     const cols = Math.floor(width / CELL_SIZE);
@@ -143,8 +145,13 @@ export const LifeGame: React.FC = () => {
 
     if (x >= 0 && x < colsRef.current && y >= 0 && y < rowsRef.current) {
         gridRef.current[x][y] = !gridRef.current[x][y];
-        // Force redraw visually immediately? 
-        // The loop picks it up next frame (16ms), which is fast enough.
+        
+        // Play sound with throttle
+        const now = Date.now();
+        if (now - lastSoundRef.current > 50) {
+            playPopSound();
+            lastSoundRef.current = now;
+        }
     }
   };
 

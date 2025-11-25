@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { playJumpSound, playGameOverSound } from '../../utils/soundUtils';
 
 const GRAVITY = 0.6;
 const JUMP_FORCE = -10;
@@ -36,6 +37,7 @@ export const DinoGame: React.FC = () => {
     if (dinoRef.current.grounded) {
       dinoRef.current.dy = JUMP_FORCE;
       dinoRef.current.grounded = false;
+      playJumpSound();
     }
   }, []);
 
@@ -140,6 +142,7 @@ export const DinoGame: React.FC = () => {
             dinoRect.y + dinoRect.h > obsRect.y
         ) {
             setGameOver(true);
+            playGameOverSound();
         }
     }
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { playMergeSound } from '../../utils/soundUtils';
 
 export const Puzzle2048: React.FC = () => {
   const [board, setBoard] = useState<number[][]>([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]);
@@ -89,6 +90,7 @@ export const Puzzle2048: React.FC = () => {
             return newS;
         });
         if (checkGameOver(rotated)) setGameOver(true);
+        playMergeSound();
     }
   }, [board, gameOver]);
 
