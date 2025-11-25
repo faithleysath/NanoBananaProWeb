@@ -40,31 +40,6 @@ export const SettingsPanel: React.FC = () => {
       </div>
 
       <div className="space-y-8 flex-1">
-        {/* Theme */}
-        <section>
-          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Theme</label>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { value: 'light', icon: Sun, label: 'Light' },
-              { value: 'dark', icon: Moon, label: 'Dark' },
-              { value: 'system', icon: Monitor, label: 'System' },
-            ].map(({ value, icon: Icon, label }) => (
-              <button
-                key={value}
-                onClick={() => updateSettings({ theme: value as any })}
-                className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                  settings.theme === value
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                    : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
         {/* Resolution */}
         <section>
           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Image Resolution</label>
