@@ -59,7 +59,7 @@ export const streamGeminiResponse = async function* (
       config: {
         imageConfig: {
           imageSize: settings.resolution,
-          aspectRatio: settings.aspectRatio,
+          ...(settings.aspectRatio !== 'Auto' ? { aspectRatio: settings.aspectRatio } : {}),
         },
         tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
         responseModalities: ["TEXT", "IMAGE"],

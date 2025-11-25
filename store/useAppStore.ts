@@ -24,7 +24,7 @@ export const useAppStore = create<AppState>((set) => ({
   apiKey: null,
   settings: {
     resolution: '1K',
-    aspectRatio: '1:1',
+    aspectRatio: 'Auto',
     useGrounding: false,
     enableThinking: true,
     customEndpoint: '',

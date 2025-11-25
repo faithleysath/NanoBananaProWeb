@@ -64,9 +64,10 @@ export const SettingsPanel: React.FC = () => {
         <section>
           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Aspect Ratio</label>
           <div className="grid grid-cols-3 gap-2">
-            {(['1:1', '3:4', '4:3', '9:16', '16:9'] as const).map((ratio) => {
+            {(['Auto', '1:1', '3:4', '4:3', '9:16', '16:9'] as const).map((ratio) => {
               const isActive = settings.aspectRatio === ratio;
               const ratioPreviewStyles: Record<string, string> = {
+                'Auto': 'w-6 h-6 border-dashed',
                 '1:1': 'w-6 h-6',
                 '3:4': 'w-5 h-7',
                 '4:3': 'w-7 h-5',
