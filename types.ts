@@ -3,6 +3,7 @@ export interface AppSettings {
   aspectRatio: 'Auto' | '1:1' | '3:4' | '4:3' | '9:16' | '16:9';
   useGrounding: boolean;
   enableThinking: boolean;
+  streamResponse: boolean;
   customEndpoint?: string;
   modelName?: string;
   theme: 'light' | 'dark' | 'system';

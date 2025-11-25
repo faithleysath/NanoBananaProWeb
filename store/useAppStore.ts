@@ -27,6 +27,7 @@ export const useAppStore = create<AppState>((set) => ({
     aspectRatio: 'Auto',
     useGrounding: false,
     enableThinking: true,
+    streamResponse: true,
     customEndpoint: '',
     modelName: 'gemini-3-pro-image-preview',
     theme: 'system',

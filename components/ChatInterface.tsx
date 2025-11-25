@@ -3,7 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
 import { ErrorBoundary } from './ErrorBoundary';
-import { streamGeminiResponse } from '../services/geminiService';
+import { streamGeminiResponse, generateContent } from '../services/geminiService';
 import { convertMessagesToHistory } from '../utils/messageUtils';
 import { ChatMessage, Attachment, Part } from '../types';
 import { Sparkles } from 'lucide-react';
@@ -88,34 +88,57 @@ export const ChatInterface: React.FC = () => {
       let thinkingDuration = 0;
       let isThinking = false;
 
-      const stream = streamGeminiResponse(
-        apiKey,
-        history, 
-        text,
-        imagesPayload,
-        settings,
-        abortControllerRef.current.signal
-      );
+      if (settings.streamResponse) {
+          const stream = streamGeminiResponse(
+            apiKey,
+            history, 
+            text,
+            imagesPayload,
+            settings,
+            abortControllerRef.current.signal
+          );
 
-      for await (const chunk of stream) {
-          // Check if currently generating thought
-          const lastPart = chunk.modelParts[chunk.modelParts.length - 1];
-          if (lastPart && lastPart.thought) {
-              isThinking = true;
-              thinkingDuration = (Date.now() - startTime) / 1000;
-          } else if (isThinking && lastPart && !lastPart.thought) {
-             // Just finished thinking
-             isThinking = false;
+          for await (const chunk of stream) {
+              // Check if currently generating thought
+              const lastPart = chunk.modelParts[chunk.modelParts.length - 1];
+              if (lastPart && lastPart.thought) {
+                  isThinking = true;
+                  thinkingDuration = (Date.now() - startTime) / 1000;
+              } else if (isThinking && lastPart && !lastPart.thought) {
+                // Just finished thinking
+                isThinking = false;
+              }
+
+              updateLastMessage(chunk.modelParts, false, isThinking ? thinkingDuration : undefined);
           }
+          
+          // Final update to ensure duration is set if ended while thinking (unlikely but possible)
+          // or to set the final duration if the whole response was a thought
+          if (isThinking) {
+              thinkingDuration = (Date.now() - startTime) / 1000;
+              updateLastMessage(useAppStore.getState().messages.slice(-1)[0].parts, false, thinkingDuration);
+          }
+      } else {
+          const result = await generateContent(
+            apiKey,
+            history, 
+            text,
+            imagesPayload,
+            settings,
+            abortControllerRef.current.signal
+          );
 
-          updateLastMessage(chunk.modelParts, false, isThinking ? thinkingDuration : undefined);
-      }
-      
-      // Final update to ensure duration is set if ended while thinking (unlikely but possible)
-      // or to set the final duration if the whole response was a thought
-      if (isThinking) {
-          thinkingDuration = (Date.now() - startTime) / 1000;
-          updateLastMessage(useAppStore.getState().messages.slice(-1)[0].parts, false, thinkingDuration);
+          // Calculate thinking duration for non-streaming response
+          let totalDuration = (Date.now() - startTime) / 1000;
+          // In non-streaming, we can't easily separate thinking time from generation time precisely
+          // unless the model metadata provides it (which it currently doesn't in a standardized way exposed here).
+          // But we can check if there are thinking parts and attribute some time or just show total time?
+          // The UI expects thinkingDuration to show beside the "Thinking Process" block.
+          // If we have thought parts, we can pass the total duration as a fallback, or 0 if we don't want to guess.
+          // However, existing UI logic in MessageBubble uses `thinkingDuration` prop on the message.
+          
+          const hasThought = result.modelParts.some(p => p.thought);
+          updateLastMessage(result.modelParts, false, hasThought ? totalDuration : undefined);
       }
 
     } catch (error: any) {

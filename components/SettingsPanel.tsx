@@ -134,6 +134,25 @@ export const SettingsPanel: React.FC = () => {
              Show the model's internal thought process. Disable this for models that don't support thinking (e.g. gemini-2.5-flash-image / Nano Banana).
           </p>
         </section>
+
+        {/* Streaming */}
+        <section>
+          <label className="flex items-center justify-between cursor-pointer group">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Stream Response</span>
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={settings.streamResponse}
+                onChange={(e) => updateSettings({ streamResponse: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            </div>
+          </label>
+          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+             Stream the model's response token by token. Disable for single-shot responses.
+          </p>
+        </section>
         
         {/* Share Configuration */}
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800 mb-4">
