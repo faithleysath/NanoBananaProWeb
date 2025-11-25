@@ -4,14 +4,13 @@ import { AppSettings, ChatMessage, Content, Part } from '../types';
 interface AppState {
   apiKey: string | null;
   settings: AppSettings;
-  history: Content[]; // Raw history for the API
-  messages: ChatMessage[]; // UI representation with IDs
+  messages: ChatMessage[]; // Single Source of Truth
   isLoading: boolean;
   isSettingsOpen: boolean;
 
   setApiKey: (key: string) => void;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
-  addMessage: (message: ChatMessage, content: Content) => void;
+  addMessage: (message: ChatMessage) => void;
   updateLastMessage: (parts: Part[], isError?: boolean) => void;
   setLoading: (loading: boolean) => void;
   toggleSettings: () => void;
@@ -30,7 +29,6 @@ export const useAppStore = create<AppState>((set) => ({
     customEndpoint: '',
     modelName: 'gemini-3-pro-image-preview',
   },
-  history: [],
   messages: [],
   isLoading: false,
   isSettingsOpen: false,
@@ -40,16 +38,14 @@ export const useAppStore = create<AppState>((set) => ({
   updateSettings: (newSettings) => 
     set((state) => ({ settings: { ...state.settings, ...newSettings } })),
 
-  addMessage: (message, content) => 
+  addMessage: (message) => 
     set((state) => ({ 
       messages: [...state.messages, message],
-      history: [...state.history, content]
     })),
 
   updateLastMessage: (parts, isError = false) => 
     set((state) => {
         const messages = [...state.messages];
-        const history = [...state.history];
         
         if (messages.length > 0) {
             messages[messages.length - 1] = {
@@ -59,21 +55,14 @@ export const useAppStore = create<AppState>((set) => ({
             };
         }
         
-        if (history.length > 0) {
-            history[history.length - 1] = {
-                ...history[history.length - 1],
-                parts: [...parts]
-            };
-        }
-        
-        return { messages, history };
+        return { messages };
     }),
 
   setLoading: (loading) => set({ isLoading: loading }),
   
   toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
 
-  clearHistory: () => set({ history: [], messages: [] }),
+  clearHistory: () => set({ messages: [] }),
 
   removeApiKey: () => set({ apiKey: null }),
 
@@ -83,17 +72,13 @@ export const useAppStore = create<AppState>((set) => ({
       if (index === -1) return {};
 
       const newMessages = [...state.messages];
-      const newHistory = [...state.history];
-
       newMessages.splice(index, 1);
-      newHistory.splice(index, 1);
 
-      return { messages: newMessages, history: newHistory };
+      return { messages: newMessages };
     }),
 
   sliceMessages: (index) =>
     set((state) => ({
       messages: state.messages.slice(0, index + 1),
-      history: state.history.slice(0, index + 1),
     })),
 }));

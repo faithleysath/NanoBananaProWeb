@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
 import { streamGeminiResponse } from '../services/geminiService';
+import { convertMessagesToHistory } from '../utils/messageUtils';
 import { ChatMessage, Attachment, Part } from '../types';
 import { Sparkles } from 'lucide-react';
 
@@ -10,7 +11,6 @@ export const ChatInterface: React.FC = () => {
   const { 
     apiKey, 
     messages, 
-    history, 
     settings, 
     addMessage, 
     updateLastMessage,
@@ -32,9 +32,10 @@ export const ChatInterface: React.FC = () => {
   const handleSend = async (text: string, attachments: Attachment[]) => {
     if (!apiKey) return;
 
-    // Capture the current history state *before* adding the new user message.
-    // This ensures that when we regenerate, we are using the sliced history from the store.
-    const currentHistory = useAppStore.getState().history;
+    // Capture the current messages state *before* adding the new user message.
+    // This allows us to generate history up to this point.
+    const currentMessages = useAppStore.getState().messages;
+    const history = convertMessagesToHistory(currentMessages);
 
     setLoading(true);
     const msgId = Date.now().toString();
@@ -58,14 +59,8 @@ export const ChatInterface: React.FC = () => {
       timestamp: Date.now()
     };
     
-    // Construct Raw Content for History
-    const userContent = {
-        role: 'user' as const,
-        parts: userParts
-    };
-    
     // Add User Message
-    addMessage(userMessage, userContent);
+    addMessage(userMessage);
 
     // Prepare Model Placeholder
     const modelMessageId = (Date.now() + 1).toString();
@@ -77,7 +72,7 @@ export const ChatInterface: React.FC = () => {
     };
     
     // Add Placeholder Model Message to Store
-    addMessage(modelMessage, { role: 'model', parts: [] });
+    addMessage(modelMessage);
 
     try {
       // Prepare images for service
@@ -90,7 +85,7 @@ export const ChatInterface: React.FC = () => {
 
       const stream = streamGeminiResponse(
         apiKey,
-        currentHistory, 
+        history, 
         text,
         imagesPayload,
         settings,
