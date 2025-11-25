@@ -9,11 +9,18 @@
   
   --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-heartbeat: heartbeat 2s ease-in-out infinite;
+  --animate-heartbeat-slow: heartbeat-slow 3s ease-in-out infinite;
+  --animate-heartbeat-mixed: heartbeat 2s ease-in-out infinite, heartbeat-slow 3s ease-in-out infinite;
 }
 
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
+}
+
+@keyframes heartbeat-slow {
+  0%, 100% { fill: transparent; }
+  50% { fill: currentColor; }
 }
 
 body {

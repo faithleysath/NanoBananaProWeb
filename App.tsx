@@ -69,10 +69,10 @@ const App: React.FC = () => {
               href="https://github.com/faithleysath/NanoBananaProWeb"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 animate-heartbeat hover:animate-none"
+              className="group rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="GitHub Repository"
             >
-              <Github className="h-6 w-6" />
+              <Github className="h-6 w-6 animate-heartbeat-mixed group-hover:animate-none" />
             </a>
             <button
               onClick={() => updateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
