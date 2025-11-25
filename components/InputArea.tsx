@@ -6,10 +6,11 @@ interface Props {
   onSend: (text: string, attachments: Attachment[]) => void;
   onStop: () => void;
   onOpenArcade?: () => void;
+  isArcadeOpen?: boolean;
   disabled: boolean;
 }
 
-export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, disabled }) => {
+export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArcadeOpen, disabled }) => {
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -113,8 +114,12 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, disab
           {onOpenArcade && (
             <button
               onClick={onOpenArcade}
-              className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 transition"
-              title="Open Arcade"
+              className={`mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
+                  isArcadeOpen 
+                    ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' 
+                    : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
+              }`}
+              title={isArcadeOpen ? "Close Arcade" : "Open Arcade"}
             >
               <Gamepad2 className="h-5 w-5" />
             </button>

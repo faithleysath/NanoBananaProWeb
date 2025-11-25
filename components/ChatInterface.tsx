@@ -284,6 +284,7 @@ export const ChatInterface: React.FC = () => {
         onStop={handleStop} 
         disabled={isLoading}
         onOpenArcade={handleToggleArcade}
+        isArcadeOpen={showArcade}
       />
     </div>
   );
