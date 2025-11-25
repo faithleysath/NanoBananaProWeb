@@ -186,7 +186,7 @@ export const SettingsPanel: React.FC = () => {
         </section>
 
         {/* Info */}
-        <div className="mt-4 text-center text-[10px] text-gray-400 dark:text-gray-600 space-y-1">
+        <div className="mt-1 pb-4 text-center text-[10px] text-gray-400 dark:text-gray-600 space-y-1">
            <p>Model: {settings.modelName || 'Default'}</p>
            {settings.customEndpoint && <p className="truncate px-4">Endpoint: {settings.customEndpoint}</p>}
         </div>
