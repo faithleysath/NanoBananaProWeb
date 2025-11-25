@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
+import { ErrorBoundary } from './ErrorBoundary';
 import { streamGeminiResponse } from '../services/geminiService';
 import { convertMessagesToHistory } from '../utils/messageUtils';
 import { ChatMessage, Attachment, Part } from '../types';
@@ -188,14 +189,15 @@ export const ChatInterface: React.FC = () => {
         )}
 
         {messages.map((msg, index) => (
-          <MessageBubble 
-            key={msg.id} 
-            message={msg} 
-            isLast={index === messages.length - 1}
-            isGenerating={isLoading}
-            onDelete={handleDelete}
-            onRegenerate={handleRegenerate}
-          />
+          <ErrorBoundary key={msg.id}>
+            <MessageBubble 
+              message={msg} 
+              isLast={index === messages.length - 1}
+              isGenerating={isLoading}
+              onDelete={handleDelete}
+              onRegenerate={handleRegenerate}
+            />
+          </ErrorBoundary>
         ))}
 
         {isLoading && (
