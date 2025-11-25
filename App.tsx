@@ -100,13 +100,46 @@ const App: React.FC = () => {
         </div>
 
         {/* Settings Sidebar (Desktop/Mobile Overlay) */}
-        {isSettingsOpen && (
-          <div className="absolute inset-0 z-20 flex justify-end bg-black/50 backdrop-blur-sm sm:static sm:bg-transparent sm:backdrop-blur-none sm:w-80 sm:border-l sm:border-gray-200 dark:sm:border-gray-800 transition-colors duration-200">
-             <div className="w-full h-full sm:w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-2xl p-4 overflow-y-auto transition-colors duration-200">
-                <SettingsPanel />
-             </div>
-          </div>
-        )}
+        <div 
+          className={`
+            absolute inset-0 z-20 flex justify-end
+            transition-all duration-300 ease-in-out
+            ${isSettingsOpen 
+              ? 'bg-black/50 backdrop-blur-sm pointer-events-auto' 
+              : 'bg-transparent backdrop-blur-none pointer-events-none'
+            }
+            
+            sm:static sm:z-auto sm:bg-transparent sm:backdrop-blur-none sm:pointer-events-auto sm:overflow-hidden
+            sm:transition-[width,border-color]
+            ${isSettingsOpen 
+              ? 'sm:w-80 sm:border-l sm:border-gray-200 dark:sm:border-gray-800' 
+              : 'sm:w-0 sm:border-l-0 sm:border-transparent'
+            }
+          `}
+          onClick={() => {
+            // Close on backdrop click (mobile only)
+            if (window.innerWidth < 640 && isSettingsOpen) {
+               toggleSettings();
+            }
+          }}
+        >
+           <div 
+             className={`
+               w-full h-full sm:w-80 bg-white dark:bg-gray-900 
+               shadow-2xl sm:shadow-none
+               overflow-y-auto overflow-x-hidden border-l border-gray-200 dark:border-gray-800 sm:border-none
+               
+               transition-transform duration-300 ease-in-out
+               ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full'}
+               sm:translate-x-0
+             `}
+             onClick={(e) => e.stopPropagation()}
+           >
+              <div className="p-4 w-full">
+                  <SettingsPanel />
+              </div>
+           </div>
+        </div>
       </main>
 
       {/* Modals */}
