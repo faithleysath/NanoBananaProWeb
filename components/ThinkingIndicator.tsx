@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Sparkles, Gamepad2, BrainCircuit } from 'lucide-react';
+import { Sparkles, Gamepad2, BrainCircuit, X, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { SnakeGame } from './games/SnakeGame';
 import { TapGame } from './games/TapGame';
 import { DinoGame } from './games/DinoGame';
 import { BubbleGame } from './games/BubbleGame';
 
-export const ThinkingIndicator: React.FC = () => {
+interface Props {
+    onClose?: () => void;
+    isThinking?: boolean;
+}
+
+export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true }) => {
   const [elapsed, setElapsed] = useState(0);
   const [phase, setPhase] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -46,11 +51,15 @@ export const ThinkingIndicator: React.FC = () => {
     mediaQuery.addEventListener('change', handleSystemChange);
 
     const timer = setInterval(() => {
-      setElapsed(prev => prev + 0.1);
+      if (isThinking) {
+        setElapsed(prev => prev + 0.1);
+      }
     }, 100);
 
     const phaseTimer = setInterval(() => {
-      setPhase(prev => (prev + 1) % phases.length);
+      if (isThinking) {
+        setPhase(prev => (prev + 1) % phases.length);
+      }
     }, 4000);
 
     return () => {
@@ -59,7 +68,7 @@ export const ThinkingIndicator: React.FC = () => {
       window.removeEventListener('resize', checkMobile);
       mediaQuery.removeEventListener('change', handleSystemChange);
     };
-  }, [theme]);
+  }, [theme, isThinking]);
 
   const renderGame = () => {
       if (isDark) {
@@ -90,11 +99,17 @@ export const ThinkingIndicator: React.FC = () => {
           }`}>
              <div className="flex items-center gap-2">
                 <div className="relative flex items-center justify-center h-6 w-6">
-                    <div className={`absolute inset-0 rounded-full animate-ping opacity-50 ${isDark ? 'bg-blue-500/20' : 'bg-blue-400/30'}`}></div>
-                    <Sparkles className={`h-4 w-4 animate-spin-slow ${isDark ? 'text-blue-400' : 'text-blue-500'}`} />
+                    {isThinking ? (
+                        <>
+                            <div className={`absolute inset-0 rounded-full animate-ping opacity-50 ${isDark ? 'bg-blue-500/20' : 'bg-blue-400/30'}`}></div>
+                            <Sparkles className={`h-4 w-4 animate-spin-slow ${isDark ? 'text-blue-400' : 'text-blue-500'}`} />
+                        </>
+                    ) : (
+                        <CheckCircle2 className={`h-5 w-5 ${isDark ? 'text-green-400' : 'text-green-500'}`} />
+                    )}
                 </div>
                 <span className={`text-sm font-medium transition-all duration-500 min-w-[150px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                    {phases[phase]}
+                    {isThinking ? phases[phase] : "Response Ready!"}
                 </span>
              </div>
              
@@ -107,6 +122,19 @@ export const ThinkingIndicator: React.FC = () => {
                         {elapsed.toFixed(1)}s
                      </span>
                  </div>
+                 
+                 {/* Close Button */}
+                 {onClose && (
+                     <button 
+                        onClick={onClose}
+                        className={`p-1 rounded-full transition-colors ${
+                            isDark ? 'hover:bg-gray-800 text-gray-500 hover:text-gray-300' : 'hover:bg-gray-200 text-gray-400 hover:text-gray-600'
+                        }`}
+                        title="Close Arcade"
+                     >
+                         <X className="h-4 w-4" />
+                     </button>
+                 )}
              </div>
           </div>
 

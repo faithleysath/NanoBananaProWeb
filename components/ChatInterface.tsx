@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
@@ -22,14 +22,21 @@ export const ChatInterface: React.FC = () => {
     sliceMessages
   } = useAppStore();
   
+  const [showArcade, setShowArcade] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (isLoading) {
+        setShowArcade(true);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, showArcade]);
 
   const handleSend = async (text: string, attachments: Attachment[]) => {
     if (!apiKey) return;
@@ -245,10 +252,20 @@ export const ChatInterface: React.FC = () => {
           </ErrorBoundary>
         ))}
 
-        {isLoading && <ThinkingIndicator />}
+        {showArcade && (
+            <ThinkingIndicator 
+                isThinking={isLoading} 
+                onClose={() => setShowArcade(false)} 
+            />
+        )}
       </div>
 
-      <InputArea onSend={handleSend} onStop={handleStop} disabled={isLoading} />
+      <InputArea 
+        onSend={handleSend} 
+        onStop={handleStop} 
+        disabled={isLoading}
+        onOpenArcade={() => setShowArcade(true)}
+      />
     </div>
   );
 };

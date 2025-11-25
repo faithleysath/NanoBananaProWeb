@@ -1,14 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { Send, ImagePlus, X, Square } from 'lucide-react';
+import { Send, ImagePlus, X, Square, Gamepad2 } from 'lucide-react';
 import { Attachment } from '../types';
 
 interface Props {
   onSend: (text: string, attachments: Attachment[]) => void;
   onStop: () => void;
+  onOpenArcade?: () => void;
   disabled: boolean;
 }
 
-export const InputArea: React.FC<Props> = ({ onSend, onStop, disabled }) => {
+export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, disabled }) => {
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,6 +109,16 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, disabled }) => {
           >
             <ImagePlus className="h-5 w-5" />
           </button>
+
+          {onOpenArcade && (
+            <button
+              onClick={onOpenArcade}
+              className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 transition"
+              title="Open Arcade"
+            >
+              <Gamepad2 className="h-5 w-5" />
+            </button>
+          )}
 
           <textarea
             ref={textareaRef}
